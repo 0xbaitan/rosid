@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:latest
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - rosid_data:/var/lib/mysql
+    networks:
+      - rosid_link
+
+  database-client:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    environment:
+      PMA_HOST: database
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "8080:80"
+    networks:
+      - rosid_link
+
+volumes:
+  rosid_data:
+
+networks:
+  rosid_link:
+    driver: bridge
