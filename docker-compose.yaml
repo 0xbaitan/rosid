@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile 
+       
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - rosid_link 
+    depends_on:
+      - database
+      - database-client
+    
   database:
     image: mysql:latest
     restart: always
