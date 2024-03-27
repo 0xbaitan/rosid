@@ -3,10 +3,11 @@ version: '3.8'
 services:
 
   server:
+    container_name: server
     build:
       context: ./server
       dockerfile: Dockerfile 
-       
+
     restart: always
     ports:
       - "3000:3000"
@@ -14,34 +15,21 @@ services:
       - rosid_link 
     depends_on:
       - database
-      - database-client
     
   database:
-    image: mysql:latest
+    container_name: database
+    image: mongo:$MONGODB_VERSION
     restart: always
     env_file:
       - .env
     ports:
-      - "3306:3306"
+      - 27017:$MONGODB_PORT
     volumes:
-      - rosid_data:/var/lib/mysql
+      - type: bind
+        source: ./data
+        target: /data/db
     networks:
       - rosid_link
-
-  database-client:
-    image: phpmyadmin/phpmyadmin:latest
-    restart: always
-    environment:
-      PMA_HOST: database
-      PMA_USER: ${MYSQL_USER}
-      PMA_PASSWORD: ${MYSQL_PASSWORD}
-    ports:
-      - "8080:80"
-    networks:
-      - rosid_link
-
-volumes:
-  rosid_data:
 
 networks:
   rosid_link:
