@@ -6,7 +6,7 @@ const databaseConfig = {
   host: process.env.MONGODB_HOST,
 };
 
-export const CONN_STRING = 'mongodb://127.0.0.1:27017/rosid';
+export const CONN_STRING = 'mongodb://127.0.0.1:27017';
 // export const CONN_STRING = (({ user, password, host, port, database }) => {
 //   if (process.env.NODE_ENV === 'development') {
 //     return 'mongodb://127.0.0.1:27017/rosid';
