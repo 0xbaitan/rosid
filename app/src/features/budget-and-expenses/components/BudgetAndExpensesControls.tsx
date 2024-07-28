@@ -6,7 +6,7 @@ import MonthNavigatorAndInfo from "./MonthNavigatorAndInfo";
 export default function BudgetAndExpensesControls() {
   return (
     <div>
-      <Button>
+      <Button className="bg-blue-500">
         <FontAwesomeIcon icon={faAngleLeft}></FontAwesomeIcon>
       </Button>
       <MonthNavigatorAndInfo />

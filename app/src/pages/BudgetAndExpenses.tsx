@@ -15,7 +15,9 @@ export default function BudgetAndExpenses() {
     <div>
       <BudgetAndExpensesControls />
       <ScannerModal />
-      <Button onClick={openScannerModal}>Scan receipt</Button>
+      <Button className="hi-mom" onClick={openScannerModal}>
+        Scan receipt
+      </Button>
     </div>
   );
 }
