@@ -27,6 +27,7 @@ module.exports = {
                 includePaths: [
                   path.resolve(__dirname, "node_modules", "bootstrap"),
                   path.resolve(__dirname, "src"),
+                  path.resolve(__dirname, "src/styles/common.scss"),
                 ],
               },
             },

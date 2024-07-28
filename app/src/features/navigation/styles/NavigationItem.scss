@@ -1,0 +1,23 @@
+@use "@/styles/partials/colors" as colors;
+@use "@/styles/partials/typography" as typography;
+.ro-nav-item {
+    @include typography.work-sans-font(1rem, bold);
+    background-color: colors.$primary;
+    color: colors.$light;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: stretch;
+    padding: 16px;
+
+    &:hover {
+        background-color: lighten($color: colors.$primary, $amount: 5);
+    }
+    &__icon {
+        margin-right: 0.6em;
+        text-align: center;
+        align-self: center;
+    }
+}

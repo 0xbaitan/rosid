@@ -1,0 +1,10 @@
+@use "@/styles/partials/colors" as colors;
+
+.ro-nav-sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: colors.$primary;
+    width: clamp(180px, 25%, 360px);
+    height: 100vh;
+    position: sticky;
+}
