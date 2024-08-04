@@ -2,6 +2,20 @@ version: '3.8'
 
 services:
 
+  app:
+    container_name: app
+    build: 
+      context: ./app
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+        - 4000:3000
+    networks:
+      - rosid_link
+    depends_on:
+      - database
+      - server
+
   server:
     container_name: server
     build:
@@ -10,7 +24,7 @@ services:
 
     restart: always
     ports:
-      - "3000:3000"
+      - 3000:3000
     networks:
       - rosid_link 
     depends_on:
@@ -23,13 +37,14 @@ services:
     env_file:
       - .env
     ports:
-      - 27017:$MONGODB_PORT
+      - 37017:$MONGODB_PORT
     volumes:
       - type: bind
         source: ./data
         target: /data/db
     networks:
       - rosid_link
+
 
 networks:
   rosid_link:
