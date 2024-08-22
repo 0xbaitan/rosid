@@ -1,7 +1,7 @@
-import { useStoreDispatch, useStoreSelector } from "@/store/hooks";
-import { useCallback } from "react";
-import { scannerModalActions } from "../reducers/scannerModalSlice";
-import useMemoize from "@/hooks/useMemoize";
+import { useStoreDispatch, useStoreSelector } from '@/store/hooks';
+import { useCallback } from 'react';
+import { scannerModalActions } from '../reducers/scannerModalSlice';
+import useMemoize from '@/hooks/useMemoize';
 
 export function useScanImage() {
   const dispatch = useStoreDispatch();
@@ -24,7 +24,7 @@ export function useReceiptAsString() {
 
 export function useReceipt() {
   const receipt = useStoreSelector(
-    (store) => store["receipt-scanning"]["scanner-modal"].receipt
+    (store) => store['receipt-scanning']['scanner-modal'].receipt
   );
   return useMemoize(receipt);
 }

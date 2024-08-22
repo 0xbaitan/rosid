@@ -1,11 +1,11 @@
-import { takeLatest, call, put } from "redux-saga/effects";
+import { takeLatest, call, put } from 'redux-saga/effects';
 import {
   fetchUsersFailure,
   fetchUsersSuccess,
   requestFetchUsers,
-} from "../reducers/users-reducer";
-import UsersApi from "@/api/users";
-import { User } from "@/types";
+} from '../reducers/users-reducer';
+import UsersApi from '@/api/users';
+import { User } from '@/types';
 
 function* fetchUsers() {
   try {

@@ -10,6 +10,8 @@ import * as DatabaseConfig from 'config/database.config';
   imports: [
     MongooseModule.forRoot(DatabaseConfig.CONN_STRING, {
       dbName: 'rosid',
+      user: 'admin',
+      pass: 'admin4rosid',
     }),
     UsersModule,
     BudgetAndExpensesModule,

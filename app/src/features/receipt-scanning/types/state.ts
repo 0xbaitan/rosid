@@ -1,5 +1,5 @@
-import { PossiblyNull } from "@/types";
-import { Receipt } from ".";
+import { PossiblyNull } from '@/types';
+import { Receipt } from '.';
 
 export type ScannerModalState = {
   receipt: PossiblyNull<Receipt>;

@@ -1,13 +1,13 @@
-import { ReduxAction } from "@/types";
-import { CameraState } from "../types/state";
-import { createSlice } from "@reduxjs/toolkit";
+import { ReduxAction } from '@/types';
+import { CameraState } from '../types/state';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: CameraState = {
   enableCamera: true,
   imageCaptured: null,
 };
 const cameraSlice = createSlice({
-  name: "camera",
+  name: 'camera',
   initialState,
   reducers: {
     setImage: (state, action: ReduxAction<string | null>) => {

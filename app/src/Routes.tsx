@@ -2,9 +2,9 @@ import {
   BrowserRouter as Router,
   Route,
   Routes as RoutingTable,
-} from "react-router-dom";
-import Home from "./pages/Home";
-import BudgetAndExpenses from "./pages/BudgetAndExpenses";
+} from 'react-router-dom';
+import Home from './pages/Home';
+import BudgetAndExpenses from './pages/BudgetAndExpenses';
 
 export default function Routes() {
   return (

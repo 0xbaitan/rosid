@@ -2,9 +2,10 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@shared/*": ["../shared/build"]
     },
-    "target": "ES2023",
+    "target": "ESNext",
     "lib": [
       "dom",
       "dom.iterable",

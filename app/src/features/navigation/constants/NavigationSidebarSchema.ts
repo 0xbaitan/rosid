@@ -1,17 +1,17 @@
-import { faHome, faMoneyBills } from "@fortawesome/free-solid-svg-icons";
-import { NavigationItemUniqueProps } from "../components/NavigationItem";
+import { faHome, faMoneyBills } from '@fortawesome/free-solid-svg-icons';
+import { NavigationItemUniqueProps } from '../components/NavigationItem';
 
 export type NavigationSidebarSchema = NavigationItemUniqueProps[];
 
 const sidebarData: NavigationSidebarSchema = [
   {
-    menuLabel: "Home",
-    url: "/",
+    menuLabel: 'Home',
+    url: '/',
     icon: faHome,
   },
   {
-    menuLabel: "Budget and Expenses",
-    url: "/budget-and-expenses",
+    menuLabel: 'Budget and Expenses',
+    url: '/budget-and-expenses',
     icon: faMoneyBills,
   },
 ];

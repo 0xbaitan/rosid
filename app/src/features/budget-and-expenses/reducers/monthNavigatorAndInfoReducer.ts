@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MonthNavigatorAndInfoState } from "../types/state";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { MonthNavigatorAndInfoState } from '../types/state';
 
 const initialState: MonthNavigatorAndInfoState = (() => {
   const currentDate = new Date();
@@ -8,13 +8,13 @@ const initialState: MonthNavigatorAndInfoState = (() => {
     currentMonth: currentDate.getMonth(),
     amtBudgeted: 0,
     amtExpended: 0,
-    currency: "",
+    currency: '',
   };
 })();
 
 const monthNavigatorAndInfoSlice = createSlice({
   initialState,
-  name: "monthNavigatorAndInfo",
+  name: 'monthNavigatorAndInfo',
   reducers: {
     setCurrentYear(state, action: PayloadAction<number>) {
       state.currentYear = action.payload;

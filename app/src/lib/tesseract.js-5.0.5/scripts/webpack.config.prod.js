@@ -2,9 +2,7 @@ const path = require('path');
 const common = require('./webpack.config.common');
 const webpack = require('webpack');
 
-const genConfig = ({
-  entry, filename, library, libraryTarget,
-}) => ({
+const genConfig = ({ entry, filename, library, libraryTarget }) => ({
   ...common,
   mode: 'production',
   devtool: 'source-map',
@@ -19,7 +17,7 @@ const genConfig = ({
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
     }),
-  ]
+  ],
 });
 
 module.exports = [
@@ -30,7 +28,14 @@ module.exports = [
     libraryTarget: 'umd',
   }),
   genConfig({
-    entry: path.resolve(__dirname, '..', 'src', 'worker-script', 'browser', 'index.js'),
+    entry: path.resolve(
+      __dirname,
+      '..',
+      'src',
+      'worker-script',
+      'browser',
+      'index.js'
+    ),
     filename: 'worker.min.js',
   }),
 ];

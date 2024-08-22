@@ -1,33 +1,33 @@
-import Months from "../enums/months";
+import Months from '../enums/months';
 
 export function getMonthAsString(month: Months) {
   switch (month) {
     case Months.JANUARY:
-      return "January";
+      return 'January';
     case Months.FEBRUARY:
-      return "February";
+      return 'February';
     case Months.MARCH:
-      return "March";
+      return 'March';
     case Months.APRIL:
-      return "April";
+      return 'April';
     case Months.MAY:
-      return "May";
+      return 'May';
     case Months.JUNE:
-      return "June";
+      return 'June';
     case Months.JULY:
-      return "July";
+      return 'July';
     case Months.AUGUST:
-      return "August";
+      return 'August';
     case Months.SEPTEMBER:
-      return "September";
+      return 'September';
     case Months.OCTOBER:
-      return "October";
+      return 'October';
     case Months.NOVEMBER:
-      return "November";
+      return 'November';
     case Months.DECEMBER:
-      return "December";
+      return 'December';
     default:
-      throw new Error("Impossible. Illegal Month entered");
+      throw new Error('Impossible. Illegal Month entered');
   }
 }
 

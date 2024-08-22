@@ -1,10 +1,9 @@
-import { getReceiptExample } from "../example/ReceiptExample";
-import { useReceipt } from "../hooks/useScannerModal";
-import ReceiptItem from "./ReceiptItem";
+import { getReceiptExample } from '../example/ReceiptExample';
+import ReceiptItem from './ReceiptItem';
 
 export default function ReceiptDisplay() {
   const receipt = getReceiptExample();
-  if (!receipt) return "No receipt found";
+  if (!receipt) return <span>"No receipt found"</span>;
   const { currency, items, savings, subtotal, total, vendor, purchaseDate } =
     receipt;
   const itemsList = items.map((item, index) => (

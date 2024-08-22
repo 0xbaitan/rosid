@@ -1,8 +1,8 @@
 export default class ImageConverter {
   public static toImageBlobUrl(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
-      if (!file || !file.type.startsWith("image/")) {
-        reject("Not an image file.");
+      if (!file || !file.type.startsWith('image/')) {
+        reject('Not an image file.');
       }
 
       const reader = new FileReader();
@@ -11,7 +11,7 @@ export default class ImageConverter {
         resolve(blobUrl);
       };
       reader.onerror = () => {
-        reject("Error reading the file.");
+        reject('Error reading the file.');
       };
       reader.readAsDataURL(file);
     });

@@ -1,15 +1,11 @@
-import { ChangeEvent } from "react";
-import { Button, FormControl, Modal } from "react-bootstrap";
-import ReceiptScanner from "../util/receipt-scanner";
-import { useStoreDispatch, useStoreSelector } from "@/store/hooks";
-import { scannerModalActions } from "../reducers/scannerModalSlice";
-import Camera from "./Camera";
-import { useReceiptAsString } from "../hooks/useScannerModal";
-import ReceiptDisplay from "./ReceiptDisplay";
+import { Button, Modal } from 'react-bootstrap';
+import { useStoreDispatch, useStoreSelector } from '@/store/hooks';
+import { scannerModalActions } from '../reducers/scannerModalSlice';
+import Camera from './Camera';
+import ReceiptDisplay from './ReceiptDisplay';
 export default function ScannerModal() {
-  const receipt = useReceiptAsString();
   const show = useStoreSelector(
-    (state) => state["receipt-scanning"]["scanner-modal"].showModalStatus
+    (state) => state['receipt-scanning']['scanner-modal'].showModalStatus
   );
   const dispatch = useStoreDispatch();
 

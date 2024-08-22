@@ -1,23 +1,17 @@
-import React, {
-  useRef,
-  useCallback,
-  useMemo,
-  Suspense,
-  ChangeEvent,
-} from "react";
-import Webcam from "react-webcam";
-import "../styles/Camera.scss";
-import { Button, FormControl } from "react-bootstrap";
-import { useStoreDispatch, useStoreSelector } from "@/store/hooks";
-import { cameraActions } from "../reducers/camera-reducer";
-import CapturedImage from "./CapturedImage";
-import ImageConverter from "../util/image-converter";
+import React, { useRef, useCallback, useMemo, ChangeEvent } from 'react';
+import Webcam from 'react-webcam';
+import '../styles/Camera.scss';
+import { Button, FormControl } from 'react-bootstrap';
+import { useStoreDispatch, useStoreSelector } from '@/store/hooks';
+import { cameraActions } from '../reducers/camera-reducer';
+import CapturedImage from './CapturedImage';
+import ImageConverter from '../util/image-converter';
 export default function Camera() {
   const videoConstraints: MediaTrackConstraints = useMemo(() => {
     return {
       width: 1280,
       height: 720,
-      facingMode: "user",
+      facingMode: 'user',
     };
   }, []);
 
@@ -32,7 +26,7 @@ export default function Camera() {
   }, [dispatch]);
 
   const enableCamera = useStoreSelector(
-    (state) => state["receipt-scanning"]["camera"].enableCamera
+    (state) => state['receipt-scanning']['camera'].enableCamera
   );
 
   const onFileUpload = useCallback(

@@ -1,6 +1,6 @@
-import "../styles/NavigationBar.scss";
-import NavigationItem from "./NavigationItem";
-import sidebarData from "../constants/NavigationSidebarSchema";
+import '../styles/NavigationBar.scss';
+import NavigationItem from './NavigationItem';
+import sidebarData from '../constants/NavigationSidebarSchema';
 export default function NavigationSidebar() {
   return (
     <nav className="ro-nav-sidebar">

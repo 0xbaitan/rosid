@@ -1,4 +1,4 @@
-import { Category, PossiblyNull } from "@/types";
+import { Category } from '@/types';
 
 export type BudgetAndExpenseItemProps = {
   dateAdded: Date;

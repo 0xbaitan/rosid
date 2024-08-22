@@ -1,4 +1,4 @@
-import config from "@/config";
+import config from '@/config';
 
 export default class Helpers {
   public static getApiPath(...segments: string[]) {
@@ -10,14 +10,14 @@ export default class Helpers {
   private static joinPaths(...segments: string[]) {
     const sanitisedSegments = segments.map((segment) => {
       segment = segment.trim();
-      while (segment.startsWith("/")) {
+      while (segment.startsWith('/')) {
         segment = segment.slice(1);
       }
-      while (segment.endsWith("/")) {
+      while (segment.endsWith('/')) {
         segment = segment.slice(0, -1);
       }
       return segment;
     });
-    return sanitisedSegments.join("/");
+    return sanitisedSegments.join('/');
   }
 }

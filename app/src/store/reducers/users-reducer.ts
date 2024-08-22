@@ -1,5 +1,5 @@
-import { User } from "@/types";
-import { createSlice } from "@reduxjs/toolkit";
+import { User } from '@/types';
+import { createSlice } from '@reduxjs/toolkit';
 
 export type UserState = {
   users: User[] | null;
@@ -12,7 +12,7 @@ const initialState: UserState = {
   error: null,
 };
 const usersSlice = createSlice({
-  name: "users",
+  name: 'users',
   initialState,
   reducers: {
     requestFetchUsers: (state) => {

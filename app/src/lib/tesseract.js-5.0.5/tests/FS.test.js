@@ -3,14 +3,12 @@ const FS_WAIT = 500;
 let worker;
 before(async function cb() {
   this.timeout(0);
-  worker = await createWorker("eng", 1, OPTIONS);
+  worker = await createWorker('eng', 1, OPTIONS);
 });
 
 describe('FS', async () => {
   it('should write and read text from FS (using FS only)', () => {
-    [
-      SIMPLE_TEXT,
-    ].forEach(async (text) => {
+    [SIMPLE_TEXT].forEach(async (text) => {
       const path = 'tmp.txt';
       await worker.FS('writeFile', [path, SIMPLE_TEXT]);
       setTimeout(async () => {
@@ -22,9 +20,7 @@ describe('FS', async () => {
   }).timeout(TIMEOUT);
 
   it('should write and read text from FS (using writeFile, readFile)', () => {
-    [
-      SIMPLE_TEXT,
-    ].forEach(async (text) => {
+    [SIMPLE_TEXT].forEach(async (text) => {
       const path = 'tmp2.txt';
       await worker.writeText(path, SIMPLE_TEXT);
       setTimeout(async () => {

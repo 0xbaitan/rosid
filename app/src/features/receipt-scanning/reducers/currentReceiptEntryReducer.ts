@@ -1,17 +1,17 @@
-import { EMPTY_STRING } from "@/constants";
-import { CurrentReceiptEntryState } from "../types/state";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Item, Receipt } from "../types";
+import { EMPTY_STRING } from '@/constants';
+import { CurrentReceiptEntryState } from '../types/state';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Item, Receipt } from '../types';
 
 const initialState: CurrentReceiptEntryState = (() => {
   const initialCurrencyCode =
-    Intl.NumberFormat().resolvedOptions().currency ?? "GBP";
+    Intl.NumberFormat().resolvedOptions().currency ?? 'GBP';
   const currentDate = new Date();
   return {
     receipt: {
       currency: initialCurrencyCode,
       items: [],
-      purchaseDate: currentDate,
+      purchaseDate: currentDate.getTime(),
       savings: 0,
       subtotal: 0,
       total: 0,
@@ -22,14 +22,14 @@ const initialState: CurrentReceiptEntryState = (() => {
 
 const currentReceiptEntrySlice = createSlice({
   initialState,
-  name: "currentReceiptEntry",
+  name: 'currentReceiptEntry',
   reducers: {
     setCurrency(state, action: PayloadAction<string>) {
       state.receipt.currency = action.payload;
     },
 
     setPurchaseDate(state, action: PayloadAction<Date>) {
-      state.receipt.purchaseDate = action.payload;
+      state.receipt.purchaseDate = action.payload.getTime();
     },
 
     setSavings(state, action: PayloadAction<number>) {

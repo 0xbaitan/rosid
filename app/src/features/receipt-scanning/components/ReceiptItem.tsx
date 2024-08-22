@@ -1,5 +1,5 @@
-import { FormControl } from "react-bootstrap";
-import { ReceiptItemProps } from "../types/props";
+import { FormControl } from 'react-bootstrap';
+import { ReceiptItemProps } from '../types/props';
 
 export default function ReceiptItem(props: ReceiptItemProps) {
   const { item } = props;
@@ -14,7 +14,7 @@ export default function ReceiptItem(props: ReceiptItemProps) {
     category,
   } = item;
 
-  let expiryDateString = expiryDate
+  const expiryDateString = expiryDate
     ? new Date(expiryDate).toDateString()
     : new Date().toDateString();
   return (

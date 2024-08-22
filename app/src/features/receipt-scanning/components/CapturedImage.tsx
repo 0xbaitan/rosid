@@ -1,15 +1,13 @@
-import { Button, Image } from "react-bootstrap";
-import "../styles/CapturedImage.scss";
-import { useStoreDispatch, useStoreSelector } from "@/store/hooks";
-import { NO_AVAILABLE_IMAGE_PATH } from "@/constants";
-import { useCallback } from "react";
-import { cameraActions } from "../reducers/camera-reducer";
-import { scannerModalActions } from "../reducers/scannerModalSlice";
-import ReceiptScanner from "../util/receipt-scanner";
-import { useScanImage } from "../hooks/useScannerModal";
+import { Button, Image } from 'react-bootstrap';
+import '../styles/CapturedImage.scss';
+import { useStoreDispatch, useStoreSelector } from '@/store/hooks';
+import { NO_AVAILABLE_IMAGE_PATH } from '@/constants';
+import { useCallback } from 'react';
+import { cameraActions } from '../reducers/camera-reducer';
+import { useScanImage } from '../hooks/useScannerModal';
 export default function CapturedImage() {
   const imageSrc = useStoreSelector(
-    (state) => state["receipt-scanning"].camera.imageCaptured
+    (state) => state['receipt-scanning'].camera.imageCaptured
   );
   const dispatch = useStoreDispatch();
 

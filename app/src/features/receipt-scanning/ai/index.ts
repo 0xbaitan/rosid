@@ -1,7 +1,7 @@
-import config from "@/config";
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";
+import config from '@/config';
+import { ChatOpenAI } from '@langchain/openai';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { StringOutputParser } from '@langchain/core/output_parsers';
 
 const chatModel = new ChatOpenAI({
   apiKey: config.openAiKey,
@@ -12,7 +12,7 @@ const outputParser = new StringOutputParser();
 
 const receiptParsingPrompt = ChatPromptTemplate.fromMessages([
   [
-    "system",
+    'system',
     `You are a helpful assistant that's part of an expense tracking and budgeting software application called Rosid.
     One of Rosid's utilities is to be able to scan receipts and extract valuable information out of it that can be stored in a database.
     Your input will be text obtained from scanning the receipts using Tesseract.js.
@@ -42,7 +42,7 @@ const receiptParsingPrompt = ChatPromptTemplate.fromMessages([
     Also if you think the input itself is in no way a receipt, please output null instead of a JSON object.
    `,
   ],
-  ["user", "{input}"],
+  ['user', '{input}'],
 ]);
 
 const receiptParsingChain = receiptParsingPrompt

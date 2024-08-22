@@ -110,8 +110,8 @@
  */
 
 /**
-  * @type {Languages}
-  */
+ * @type {Languages}
+ */
 module.exports = {
   AFR: 'afr',
   AMH: 'amh',

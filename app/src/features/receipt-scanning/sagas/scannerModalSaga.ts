@@ -1,8 +1,8 @@
-import { call, put, takeEvery } from "redux-saga/effects";
-import { scannerModalActions } from "../reducers/scannerModalSlice";
-import ReceiptScanner from "../util/receipt-scanner";
-import { PossiblyNull } from "@/types";
-import { Receipt } from "../types";
+import { call, put, takeEvery } from 'redux-saga/effects';
+import { scannerModalActions } from '../reducers/scannerModalSlice';
+import ReceiptScanner from '../util/receipt-scanner';
+import { PossiblyNull } from '@/types';
+import { Receipt } from '../types';
 
 function* scanImageSagaSideEffect(
   action: ReturnType<typeof scannerModalActions.scanImage>

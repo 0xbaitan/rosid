@@ -15,13 +15,14 @@ const {
 
 let workerCounter = 0;
 
-module.exports = async (langs = 'eng', oem = OEM.LSTM_ONLY, _options = {}, config = {}) => {
+module.exports = async (
+  langs = 'eng',
+  oem = OEM.LSTM_ONLY,
+  _options = {},
+  config = {}
+) => {
   const id = getId('Worker', workerCounter);
-  const {
-    logger,
-    errorHandler,
-    ...options
-  } = resolvePaths({
+  const { logger, errorHandler, ...options } = resolvePaths({
     ...defaultOptions,
     ..._options,
   });
@@ -33,7 +34,8 @@ module.exports = async (langs = 'eng', oem = OEM.LSTM_ONLY, _options = {}, confi
   const currentLangs = typeof langs === 'string' ? langs.split('+') : langs;
   let currentOem = oem;
   let currentConfig = config;
-  const lstmOnlyCore = [OEM.DEFAULT, OEM.LSTM_ONLY].includes(oem) && !options.legacyCore;
+  const lstmOnlyCore =
+    [OEM.DEFAULT, OEM.LSTM_ONLY].includes(oem) && !options.legacyCore;
 
   let workerResReject;
   let workerResResolve;
@@ -41,7 +43,9 @@ module.exports = async (langs = 'eng', oem = OEM.LSTM_ONLY, _options = {}, confi
     workerResResolve = resolve;
     workerResReject = reject;
   });
-  const workerError = (event) => { workerResReject(event.message); };
+  const workerError = (event) => {
+    workerResReject(event.message);
+  };
 
   let worker = spawnWorker(options);
   worker.onerror = workerError;
@@ -56,7 +60,7 @@ module.exports = async (langs = 'eng', oem = OEM.LSTM_ONLY, _options = {}, confi
     rejects[promiseId] = rej;
   };
 
-  const startJob = ({ id: jobId, action, payload }) => (
+  const startJob = ({ id: jobId, action, payload }) =>
     new Promise((resolve, reject) => {
       log(`[${id}]: Start ${jobId}, action=${action}`);
       // Using both `action` and `jobId` in case user provides non-unique `jobId`.
@@ -69,87 +73,113 @@ module.exports = async (langs = 'eng', oem = OEM.LSTM_ONLY, _options = {}, confi
         action,
         payload,
       });
-    })
-  );
+    });
 
-  const load = () => (
-    console.warn('`load` is depreciated and should be removed from code (workers now come pre-loaded)')
-  );
+  const load = () =>
+    console.warn(
+      '`load` is depreciated and should be removed from code (workers now come pre-loaded)'
+    );
 
-  const loadInternal = (jobId) => (
-    startJob(createJob({
-      id: jobId, action: 'load', payload: { options: { lstmOnly: lstmOnlyCore, corePath: options.corePath, logging: options.logging } },
-    }))
-  );
+  const loadInternal = (jobId) =>
+    startJob(
+      createJob({
+        id: jobId,
+        action: 'load',
+        payload: {
+          options: {
+            lstmOnly: lstmOnlyCore,
+            corePath: options.corePath,
+            logging: options.logging,
+          },
+        },
+      })
+    );
 
-  const writeText = (path, text, jobId) => (
-    startJob(createJob({
-      id: jobId,
-      action: 'FS',
-      payload: { method: 'writeFile', args: [path, text] },
-    }))
-  );
+  const writeText = (path, text, jobId) =>
+    startJob(
+      createJob({
+        id: jobId,
+        action: 'FS',
+        payload: { method: 'writeFile', args: [path, text] },
+      })
+    );
 
-  const readText = (path, jobId) => (
-    startJob(createJob({
-      id: jobId,
-      action: 'FS',
-      payload: { method: 'readFile', args: [path, { encoding: 'utf8' }] },
-    }))
-  );
+  const readText = (path, jobId) =>
+    startJob(
+      createJob({
+        id: jobId,
+        action: 'FS',
+        payload: { method: 'readFile', args: [path, { encoding: 'utf8' }] },
+      })
+    );
 
-  const removeFile = (path, jobId) => (
-    startJob(createJob({
-      id: jobId,
-      action: 'FS',
-      payload: { method: 'unlink', args: [path] },
-    }))
-  );
+  const removeFile = (path, jobId) =>
+    startJob(
+      createJob({
+        id: jobId,
+        action: 'FS',
+        payload: { method: 'unlink', args: [path] },
+      })
+    );
 
-  const FS = (method, args, jobId) => (
-    startJob(createJob({
-      id: jobId,
-      action: 'FS',
-      payload: { method, args },
-    }))
-  );
+  const FS = (method, args, jobId) =>
+    startJob(
+      createJob({
+        id: jobId,
+        action: 'FS',
+        payload: { method, args },
+      })
+    );
 
-  const loadLanguage = () => (
-    console.warn('`loadLanguage` is depreciated and should be removed from code (workers now come with language pre-loaded)')
-  );
+  const loadLanguage = () =>
+    console.warn(
+      '`loadLanguage` is depreciated and should be removed from code (workers now come with language pre-loaded)'
+    );
 
-  const loadLanguageInternal = (_langs, jobId) => startJob(createJob({
-    id: jobId,
-    action: 'loadLanguage',
-    payload: {
-      langs: _langs,
-      options: {
-        langPath: options.langPath,
-        dataPath: options.dataPath,
-        cachePath: options.cachePath,
-        cacheMethod: options.cacheMethod,
-        gzip: options.gzip,
-        lstmOnly: [OEM.LSTM_ONLY, OEM.TESSERACT_LSTM_COMBINED].includes(currentOem)
-          && !options.legacyLang,
-      },
-    },
-  }));
+  const loadLanguageInternal = (_langs, jobId) =>
+    startJob(
+      createJob({
+        id: jobId,
+        action: 'loadLanguage',
+        payload: {
+          langs: _langs,
+          options: {
+            langPath: options.langPath,
+            dataPath: options.dataPath,
+            cachePath: options.cachePath,
+            cacheMethod: options.cacheMethod,
+            gzip: options.gzip,
+            lstmOnly:
+              [OEM.LSTM_ONLY, OEM.TESSERACT_LSTM_COMBINED].includes(
+                currentOem
+              ) && !options.legacyLang,
+          },
+        },
+      })
+    );
 
-  const initialize = () => (
-    console.warn('`initialize` is depreciated and should be removed from code (workers now come pre-initialized)')
-  );
+  const initialize = () =>
+    console.warn(
+      '`initialize` is depreciated and should be removed from code (workers now come pre-initialized)'
+    );
 
-  const initializeInternal = (_langs, _oem, _config, jobId) => (
-    startJob(createJob({
-      id: jobId,
-      action: 'initialize',
-      payload: { langs: _langs, oem: _oem, config: _config },
-    }))
-  );
+  const initializeInternal = (_langs, _oem, _config, jobId) =>
+    startJob(
+      createJob({
+        id: jobId,
+        action: 'initialize',
+        payload: { langs: _langs, oem: _oem, config: _config },
+      })
+    );
 
-  const reinitialize = (langs = 'eng', oem, config, jobId) => { // eslint-disable-line
+  const reinitialize = (langs = 'eng', oem, config, jobId) => {
+    // eslint-disable-line
 
-    if (lstmOnlyCore && [OEM.TESSERACT_ONLY, OEM.TESSERACT_LSTM_COMBINED].includes(oem)) throw Error('Legacy model requested but code missing.');
+    if (
+      lstmOnlyCore &&
+      [OEM.TESSERACT_ONLY, OEM.TESSERACT_LSTM_COMBINED].includes(oem)
+    )
+      throw Error('Legacy model requested but code missing.');
 
     const _oem = oem || currentOem;
     currentOem = _oem;
@@ -167,48 +197,68 @@ module.exports = async (langs = 'eng', oem = OEM.LSTM_ONLY, _options = {}, confi
     currentLangs.push(..._langs);
 
     if (_langs.length > 0) {
-      return loadLanguageInternal(_langs, jobId)
-        .then(() => initializeInternal(langs, _oem, _config, jobId));
+      return loadLanguageInternal(_langs, jobId).then(() =>
+        initializeInternal(langs, _oem, _config, jobId)
+      );
     }
 
     return initializeInternal(langs, _oem, _config, jobId);
   };
 
-  const setParameters = (params = {}, jobId) => (
-    startJob(createJob({
-      id: jobId,
-      action: 'setParameters',
-      payload: { params },
-    }))
-  );
+  const setParameters = (params = {}, jobId) =>
+    startJob(
+      createJob({
+        id: jobId,
+        action: 'setParameters',
+        payload: { params },
+      })
+    );
 
-  const recognize = async (image, opts = {}, output = {
-    blocks: true, text: true, hocr: true, tsv: true,
-  }, jobId) => (
-    startJob(createJob({
-      id: jobId,
-      action: 'recognize',
-      payload: { image: await loadImage(image), options: opts, output },
-    }))
-  );
+  const recognize = async (
+    image,
+    opts = {},
+    output = {
+      blocks: true,
+      text: true,
+      hocr: true,
+      tsv: true,
+    },
+    jobId
+  ) =>
+    startJob(
+      createJob({
+        id: jobId,
+        action: 'recognize',
+        payload: { image: await loadImage(image), options: opts, output },
+      })
+    );
 
   const getPDF = (title = 'Tesseract OCR Result', textonly = false, jobId) => {
-    console.log('`getPDF` function is depreciated. `recognize` option `savePDF` should be used instead.');
-    return startJob(createJob({
-      id: jobId,
-      action: 'getPDF',
-      payload: { title, textonly },
-    }));
+    console.log(
+      '`getPDF` function is depreciated. `recognize` option `savePDF` should be used instead.'
+    );
+    return startJob(
+      createJob({
+        id: jobId,
+        action: 'getPDF',
+        payload: { title, textonly },
+      })
+    );
   };
 
   const detect = async (image, jobId) => {
-    if (lstmOnlyCore) throw Error('`worker.detect` requires Legacy model, which was not loaded.');
+    if (lstmOnlyCore)
+      throw Error(
+        '`worker.detect` requires Legacy model, which was not loaded.'
+      );
 
-    return startJob(createJob({
-      id: jobId,
-      action: 'detect',
-      payload: { image: await loadImage(image) },
-    }));
+    return startJob(
+      createJob({
+        id: jobId,
+        action: 'detect',
+        payload: { image: await loadImage(image) },
+      })
+    );
   };
 
   const terminate = async () => {
@@ -225,9 +275,7 @@ module.exports = async (langs = 'eng', oem = OEM.LSTM_ONLY, _options = {}, confi
     return Promise.resolve();
   };
 
-  onMessage(worker, ({
-    workerId, jobId, status, action, data,
-  }) => {
+  onMessage(worker, ({ workerId, jobId, status, action, data }) => {
     const promiseId = `${action}-${jobId}`;
     if (status === 'resolve') {
       log(`[${workerId}]: Complete ${jobId}`);

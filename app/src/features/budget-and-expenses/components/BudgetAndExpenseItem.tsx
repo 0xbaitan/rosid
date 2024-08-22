@@ -1,5 +1,5 @@
-import { BudgetAndExpenseItemProps } from "../types";
+import { BudgetAndExpenseItemProps } from '../types';
 
-export default function BudgetAndExpenseItem(
-  props: BudgetAndExpenseItemProps
-) {}
+export default function BudgetAndExpenseItem(props: BudgetAndExpenseItemProps) {
+  return <div></div>;
+}

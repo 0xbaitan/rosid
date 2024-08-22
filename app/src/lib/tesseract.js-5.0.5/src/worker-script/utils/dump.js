@@ -41,13 +41,8 @@ const deindent = (html) => {
  */
 module.exports = (TessModule, api, output, options) => {
   const ri = api.GetIterator();
-  const {
-    RIL_BLOCK,
-    RIL_PARA,
-    RIL_TEXTLINE,
-    RIL_WORD,
-    RIL_SYMBOL,
-  } = TessModule;
+  const { RIL_BLOCK, RIL_PARA, RIL_TEXTLINE, RIL_WORD, RIL_SYMBOL } =
+    TessModule;
   const blocks = [];
   let block;
   let para;
@@ -55,11 +50,10 @@ module.exports = (TessModule, api, output, options) => {
   let word;
   let symbol;
 
-  const enumToString = (value, prefix) => (
+  const enumToString = (value, prefix) =>
     Object.keys(TessModule)
-      .filter((e) => (e.startsWith(`${prefix}_`) && TessModule[e] === value))
-      .map((e) => e.slice(prefix.length + 1))[0]
-  );
+      .filter((e) => e.startsWith(`${prefix}_`) && TessModule[e] === value)
+      .map((e) => e.slice(prefix.length + 1))[0];
 
   const getImage = (type) => {
     api.WriteImage(type, '/image.png');
@@ -70,7 +64,11 @@ module.exports = (TessModule, api, output, options) => {
   };
 
   const getPDFInternal = (title, textonly) => {
-    const pdfRenderer = new TessModule.TessPDFRenderer('tesseract-ocr', '/', textonly);
+    const pdfRenderer = new TessModule.TessPDFRenderer(
+      'tesseract-ocr',
+      '/',
+      textonly
+    );
     pdfRenderer.BeginDocument(title);
     pdfRenderer.AddImage(api);
     pdfRenderer.EndDocument();
@@ -106,7 +104,9 @@ module.exports = (TessModule, api, output, options) => {
         block = {
           paragraphs: [],
           text: !options.skipRecognition ? ri.GetUTF8Text(RIL_BLOCK) : null,
-          confidence: !options.skipRecognition ? ri.Confidence(RIL_BLOCK) : null,
+          confidence: !options.skipRecognition
+            ? ri.Confidence(RIL_BLOCK)
+            : null,
           baseline: ri.getBaseline(RIL_BLOCK),
           bbox: ri.getBoundingBox(RIL_BLOCK),
           blocktype: enumToString(ri.BlockType(), 'PT'),
@@ -129,7 +129,9 @@ module.exports = (TessModule, api, output, options) => {
         textline = {
           words: [],
           text: !options.skipRecognition ? ri.GetUTF8Text(RIL_TEXTLINE) : null,
-          confidence: !options.skipRecognition ? ri.Confidence(RIL_TEXTLINE) : null,
+          confidence: !options.skipRecognition
+            ? ri.Confidence(RIL_TEXTLINE)
+            : null,
           baseline: ri.getBaseline(RIL_TEXTLINE),
           bbox: ri.getBoundingBox(RIL_TEXTLINE),
         };
@@ -183,7 +185,9 @@ module.exports = (TessModule, api, output, options) => {
           choices: [],
           image: null,
           text: !options.skipRecognition ? ri.GetUTF8Text(RIL_SYMBOL) : null,
-          confidence: !options.skipRecognition ? ri.Confidence(RIL_SYMBOL) : null,
+          confidence: !options.skipRecognition
+            ? ri.Confidence(RIL_SYMBOL)
+            : null,
           baseline: ri.getBaseline(RIL_SYMBOL),
           bbox: ri.getBoundingBox(RIL_SYMBOL),
           is_superscript: !!ri.SymbolIsSuperscript(),
@@ -211,16 +215,27 @@ module.exports = (TessModule, api, output, options) => {
     box: output.box ? api.GetBoxText() : null,
     unlv: output.unlv ? api.GetUNLVText() : null,
     osd: output.osd ? api.GetOsdText() : null,
-    pdf: output.pdf ? getPDFInternal(options.pdfTitle ?? 'Tesseract OCR Result', options.pdfTextOnly ?? false) : null,
+    pdf: output.pdf
+      ? getPDFInternal(
+          options.pdfTitle ?? 'Tesseract OCR Result',
+          options.pdfTextOnly ?? false
+        )
+      : null,
     imageColor: output.imageColor ? getImage(imageType.COLOR) : null,
     imageGrey: output.imageGrey ? getImage(imageType.GREY) : null,
     imageBinary: output.imageBinary ? getImage(imageType.BINARY) : null,
     confidence: !options.skipRecognition ? api.MeanTextConf() : null,
     blocks: output.blocks && !options.skipRecognition ? blocks : null,
-    layoutBlocks: output.layoutBlocks && options.skipRecognition ? blocks : null,
+    layoutBlocks:
+      output.layoutBlocks && options.skipRecognition ? blocks : null,
     psm: enumToString(api.GetPageSegMode(), 'PSM'),
     oem: enumToString(api.oem(), 'OEM'),
     version: api.Version(),
-    debug: output.debug ? TessModule.FS.readFile('/debugInternal.txt', { encoding: 'utf8', flags: 'a+' }) : null,
+    debug: output.debug
+      ? TessModule.FS.readFile('/debugInternal.txt', {
+          encoding: 'utf8',
+          flags: 'a+',
+        })
+      : null,
   };
 };

@@ -32,7 +32,17 @@ let loadLanguageLangsWorker;
 let loadLanguageOptionsWorker;
 let dataFromCache = false;
 
-const load = async ({ workerId, jobId, payload: { options: { lstmOnly, corePath, logging } } }, res) => { // eslint-disable-line max-len
+const load = async (
+  {
+    workerId,
+    jobId,
+    payload: {
+      options: { lstmOnly, corePath, logging },
+    },
+  },
+  res
+) => {
+  // eslint-disable-line max-len
   setLogging(logging);
 
   const statusText = 'initializing tesseract';
@@ -66,21 +76,23 @@ const FS = async ({ workerId, payload: { method, args } }, res) => {
   res.resolve(TessModule.FS[method](...args));
 };
 
-const loadLanguage = async ({
-  workerId,
-  payload: {
-    langs,
-    options: {
-      langPath,
-      dataPath,
-      cachePath,
-      cacheMethod,
-      gzip = true,
-      lstmOnly,
+const loadLanguage = async (
+  {
+    workerId,
+    payload: {
+      langs,
+      options: {
+        langPath,
+        dataPath,
+        cachePath,
+        cacheMethod,
+        gzip = true,
+        lstmOnly,
+      },
     },
   },
-},
-res) => {
+  res
+) => {
   // Remember options for later, as cache may be deleted if `initialize` fails
   loadLanguageLangsWorker = langs;
   loadLanguageOptionsWorker = {
@@ -116,7 +128,7 @@ res) => {
       } else {
         throw Error('Not found in cache');
       }
-    // Attempt to fetch new .traineddata file
+      // Attempt to fetch new .traineddata file
     } catch (e) {
       newData = true;
       log(`[${workerId}]: Load ${lang}.traineddata from ${langPath}`);
@@ -126,28 +138,45 @@ res) => {
         // If `langPath` if not explicitly set by the user, the jsdelivr CDN is used.
         // Data supporting the Legacy model is only included if `lstmOnly` is not true.
         // This saves a significant amount of data for the majority of users that use LSTM only.
-        const langPathDownload = langPath || (lstmOnly ? `https://cdn.jsdelivr.net/npm/@tesseract.js-data/${lang}/4.0.0_best_int` : `https://cdn.jsdelivr.net/npm/@tesseract.js-data/${lang}/4.0.0`);
+        const langPathDownload =
+          langPath ||
+          (lstmOnly
+            ? `https://cdn.jsdelivr.net/npm/@tesseract.js-data/${lang}/4.0.0_best_int`
+            : `https://cdn.jsdelivr.net/npm/@tesseract.js-data/${lang}/4.0.0`);
 
         // For Node.js, langPath may be a URL or local file path
         // The is-url package is used to tell the difference
         // For the browser version, langPath is assumed to be a URL
-        if (env !== 'node' || isURL(langPathDownload) || langPathDownload.startsWith('moz-extension://') || langPathDownload.startsWith('chrome-extension://') || langPathDownload.startsWith('file://')) { /** When langPathDownload is an URL */
+        if (
+          env !== 'node' ||
+          isURL(langPathDownload) ||
+          langPathDownload.startsWith('moz-extension://') ||
+          langPathDownload.startsWith('chrome-extension://') ||
+          langPathDownload.startsWith('file://')
+        ) {
+          /** When langPathDownload is an URL */
           path = langPathDownload.replace(/\/$/, '');
         }
 
         // langPathDownload is a URL, fetch from server
         if (path !== null) {
           const fetchUrl = `${path}/${lang}.traineddata${gzip ? '.gz' : ''}`;
-          const resp = await (env === 'webworker' ? fetch : adapter.fetch)(fetchUrl);
+          const resp = await (env === 'webworker' ? fetch : adapter.fetch)(
+            fetchUrl
+          );
           if (!resp.ok) {
-            throw Error(`Network error while fetching ${fetchUrl}. Response code: ${resp.status}`);
+            throw Error(
+              `Network error while fetching ${fetchUrl}. Response code: ${resp.status}`
+            );
           }
           data = new Uint8Array(await resp.arrayBuffer());
 
-        // langPathDownload is a local file, read .traineddata from local filesystem
-        // (adapter.readCache is a generic file read function in Node.js version)
+          // langPathDownload is a local file, read .traineddata from local filesystem
+          // (adapter.readCache is a generic file read function in Node.js version)
         } else {
-          data = await adapter.readCache(`${langPathDownload}/${lang}.traineddata${gzip ? '.gz' : ''}`);
+          data = await adapter.readCache(
+            `${langPathDownload}/${lang}.traineddata${gzip ? '.gz' : ''}`
+          );
         }
       } else {
         data = _lang.data; // eslint-disable-line
@@ -158,7 +187,9 @@ res) => {
     if (res) res.progress({ workerId, status: statusText, progress });
 
     // Check for gzip magic numbers (1F and 8B in hex)
-    const isGzip = (data[0] === 31 && data[1] === 139) || (data[1] === 31 && data[0] === 139);
+    const isGzip =
+      (data[0] === 31 && data[1] === 139) ||
+      (data[1] === 31 && data[0] === 139);
 
     if (isGzip) {
       data = adapter.gunzip(data);
@@ -177,9 +208,14 @@ res) => {
 
     if (newData && ['write', 'refresh', undefined].includes(cacheMethod)) {
       try {
-        await adapter.writeCache(`${cachePath || '.'}/${lang}.traineddata`, data);
+        await adapter.writeCache(
+          `${cachePath || '.'}/${lang}.traineddata`,
+          data
+        );
       } catch (err) {
-        log(`[${workerId}]: Failed to write ${lang}.traineddata to cache due to error:`);
+        log(
+          `[${workerId}]: Failed to write ${lang}.traineddata to cache due to error:`
+        );
         log(err.toString());
       }
     }
@@ -206,15 +242,31 @@ const setParameters = async ({ payload: { params: _params } }, res) => {
   // Attempting to set these using this function will have no impact so a warning is printed.
   // This list is generated by searching the Tesseract codebase for parameters
   // defined with `[type]_INIT_MEMBER` rather than `[type]_MEMBER`.
-  const initParamNames = ['ambigs_debug_level', 'user_words_suffix', 'user_patterns_suffix', 'user_patterns_suffix',
-    'load_system_dawg', 'load_freq_dawg', 'load_unambig_dawg', 'load_punc_dawg', 'load_number_dawg', 'load_bigram_dawg',
-    'tessedit_ocr_engine_mode', 'tessedit_init_config_only', 'language_model_ngram_on', 'language_model_use_sigmoidal_certainty'];
+  const initParamNames = [
+    'ambigs_debug_level',
+    'user_words_suffix',
+    'user_patterns_suffix',
+    'user_patterns_suffix',
+    'load_system_dawg',
+    'load_freq_dawg',
+    'load_unambig_dawg',
+    'load_punc_dawg',
+    'load_number_dawg',
+    'load_bigram_dawg',
+    'tessedit_ocr_engine_mode',
+    'tessedit_init_config_only',
+    'language_model_ngram_on',
+    'language_model_use_sigmoidal_certainty',
+  ];
 
   const initParamStr = Object.keys(_params)
     .filter((k) => initParamNames.includes(k))
     .join(', ');
 
-  if (initParamStr.length > 0) console.log(`Attempted to set parameters that can only be set during initialization: ${initParamStr}`);
+  if (initParamStr.length > 0)
+    console.log(
+      `Attempted to set parameters that can only be set during initialization: ${initParamStr}`
+    );
 
   Object.keys(_params)
     .filter((k) => !k.startsWith('tessjs_'))
@@ -228,19 +280,22 @@ const setParameters = async ({ payload: { params: _params } }, res) => {
   }
 };
 
-const initialize = async ({
-  workerId,
-  payload: { langs: _langs, oem, config },
-}, res) => {
-  const langs = (typeof _langs === 'string')
-    ? _langs
-    : _langs.map((l) => ((typeof l === 'string') ? l : l.data)).join('+');
+const initialize = async (
+  { workerId, payload: { langs: _langs, oem, config } },
+  res
+) => {
+  const langs =
+    typeof _langs === 'string'
+      ? _langs
+      : _langs.map((l) => (typeof l === 'string' ? l : l.data)).join('+');
 
   const statusText = 'initializing api';
 
   try {
     res.progress({
-      workerId, status: statusText, progress: 0,
+      workerId,
+      status: statusText,
+      progress: 0,
     });
     if (api !== null) {
       api.End();
@@ -249,8 +304,15 @@ const initialize = async ({
     let configStr;
     // config argument may either be config file text, or object with key/value pairs
     // In the latter case we convert to config file text here
-    if (config && typeof config === 'object' && Object.keys(config).length > 0) {
-      configStr = JSON.stringify(config).replace(/,/g, '\n').replace(/:/g, ' ').replace(/["'{}]/g, '');
+    if (
+      config &&
+      typeof config === 'object' &&
+      Object.keys(config).length > 0
+    ) {
+      configStr = JSON.stringify(config)
+        .replace(/,/g, '\n')
+        .replace(/:/g, ' ')
+        .replace(/["'{}]/g, '');
     } else if (config && typeof config === 'string') {
       configStr = config;
     }
@@ -268,9 +330,17 @@ const initialize = async ({
       // The "if" condition skips this section if either (1) cache is disabled [so the issue
       // is definitely unrelated to cached data] or (2) cache is set to read-only
       // [so we do not have permission to make any changes].
-      if (['write', 'refresh', undefined].includes(loadLanguageOptionsWorker.cacheMethod)) {
+      if (
+        ['write', 'refresh', undefined].includes(
+          loadLanguageOptionsWorker.cacheMethod
+        )
+      ) {
         const langsArr = langs.split('+');
-        const delCachePromise = langsArr.map((lang) => adapter.deleteCache(`${loadLanguageOptionsWorker.cachePath || '.'}/${lang}.traineddata`));
+        const delCachePromise = langsArr.map((lang) =>
+          adapter.deleteCache(
+            `${loadLanguageOptionsWorker.cachePath || '.'}/${lang}.traineddata`
+          )
+        );
         await Promise.all(delCachePromise);
 
         // Check for the case when (1) data was loaded from the cache and
@@ -284,15 +354,30 @@ const initialize = async ({
         // "Tesseract (legacy) engine requested, but components are not present in ./eng.traineddata!!""
         // The .wasm build of Tesseract saves this message in a separate file
         // (in addition to the normal debug file location).
-        const debugStr = TessModule.FS.readFile('/debugDev.txt', { encoding: 'utf8', flags: 'a+' });
+        const debugStr = TessModule.FS.readFile('/debugDev.txt', {
+          encoding: 'utf8',
+          flags: 'a+',
+        });
         if (dataFromCache && /components are not present/.test(debugStr)) {
-          log('Data from cache missing requested OEM model. Attempting to refresh cache with new language data.');
+          log(
+            'Data from cache missing requested OEM model. Attempting to refresh cache with new language data.'
+          );
           // In this case, language data is re-loaded
-          await loadLanguage({ workerId, payload: { langs: loadLanguageLangsWorker, options: loadLanguageOptionsWorker } }); // eslint-disable-line max-len
+          await loadLanguage({
+            workerId,
+            payload: {
+              langs: loadLanguageLangsWorker,
+              options: loadLanguageOptionsWorker,
+            },
+          }); // eslint-disable-line max-len
           status = api.Init(null, langs, oem, configFile);
           if (status === -1) {
             log('Language data refresh failed.');
-            const delCachePromise2 = langsArr.map((lang) => adapter.deleteCache(`${loadLanguageOptionsWorker.cachePath || '.'}/${lang}.traineddata`));
+            const delCachePromise2 = langsArr.map((lang) =>
+              adapter.deleteCache(
+                `${loadLanguageOptionsWorker.cachePath || '.'}/${lang}.traineddata`
+              )
+            );
             await Promise.all(delCachePromise2);
           } else {
             log('Language data refresh successful.');
@@ -308,7 +393,9 @@ const initialize = async ({
     params = defaultParams;
     await setParameters({ payload: { params } });
     res.progress({
-      workerId, status: statusText, progress: 1,
+      workerId,
+      status: statusText,
+      progress: 1,
     });
     res.resolve();
   } catch (err) {
@@ -317,7 +404,11 @@ const initialize = async ({
 };
 
 const getPDFInternal = (title, textonly) => {
-  const pdfRenderer = new TessModule.TessPDFRenderer('tesseract-ocr', '/', textonly);
+  const pdfRenderer = new TessModule.TessPDFRenderer(
+    'tesseract-ocr',
+    '/',
+    textonly
+  );
   pdfRenderer.BeginDocument(title);
   pdfRenderer.AddImage(api);
   pdfRenderer.EndDocument();
@@ -342,7 +433,13 @@ const processOutput = (output) => {
   if (params.tessjs_create_tsv === '1') workingOutput.tsv = true;
   if (params.tessjs_create_unlv === '1') workingOutput.unlv = true;
 
-  const nonRecOutputs = ['imageColor', 'imageGrey', 'imageBinary', 'layoutBlocks', 'debug'];
+  const nonRecOutputs = [
+    'imageColor',
+    'imageGrey',
+    'imageBinary',
+    'layoutBlocks',
+    'debug',
+  ];
   let recOutputCount = 0;
   for (const prop of Object.keys(output)) {
     workingOutput[prop] = output[prop];
@@ -360,13 +457,15 @@ const processOutput = (output) => {
 
 // List of options for Tesseract.js (rather than passed through to Tesseract),
 // not including those with prefix "tessjs_"
-const tessjsOptions = ['rectangle', 'pdfTitle', 'pdfTextOnly', 'rotateAuto', 'rotateRadians'];
+const tessjsOptions = [
+  'rectangle',
+  'pdfTitle',
+  'pdfTextOnly',
+  'rotateAuto',
+  'rotateRadians',
+];
 
-const recognize = async ({
-  payload: {
-    image, options, output,
-  },
-}, res) => {
+const recognize = async ({ payload: { image, options, output } }, res) => {
   try {
     const optionsTess = {};
     if (typeof options === 'object' && Object.keys(options).length > 0) {
@@ -412,7 +511,9 @@ const recognize = async ({
       // The function GetAngle will be replaced with GetGradient in 4.0.4,
       // but for now we want to maintain compatibility.
       // We can switch to only using GetGradient in v5.
-      const rotateRadiansCalc = api.GetGradient ? api.GetGradient() : api.GetAngle();
+      const rotateRadiansCalc = api.GetGradient
+        ? api.GetGradient()
+        : api.GetAngle();
 
       // Restore user-provided PSM setting
       if (psmEdit) {
@@ -446,11 +547,17 @@ const recognize = async ({
       if (output.layoutBlocks) {
         api.AnalyseLayout();
       }
-      log('Skipping recognition: all output options requiring recognition are disabled.');
+      log(
+        'Skipping recognition: all output options requiring recognition are disabled.'
+      );
     }
     const { pdfTitle } = options;
     const { pdfTextOnly } = options;
-    const result = dump(TessModule, api, workingOutput, { pdfTitle, pdfTextOnly, skipRecognition });
+    const result = dump(TessModule, api, workingOutput, {
+      pdfTitle,
+      pdfTextOnly,
+      skipRecognition,
+    });
     result.rotateRadians = rotateRadiansFinal;
 
     if (output.debug) TessModule.FS.unlink('/debugInternal.txt');
@@ -549,7 +656,8 @@ exports.dispatchHandlers = (packet, send) => {
     getPDF,
     detect,
     terminate,
-  })[packet.action](packet, res)
+  })
+    [packet.action](packet, res)
     .catch((err) => res.reject(err.toString()));
 };
 

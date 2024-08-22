@@ -5,13 +5,8 @@ const databaseConfig = {
   database: process.env.MONGO_INITDB_DATABASE,
   host: process.env.MONGODB_HOST,
 };
-
-export const CONN_STRING = 'mongodb://127.0.0.1:27017';
-// export const CONN_STRING = (({ user, password, host, port, database }) => {
-//   if (process.env.NODE_ENV === 'development') {
-//     return 'mongodb://127.0.0.1:27017/rosid';
-//   }
-//   return `mongodb://127.0.0.1:27017/rosid`;
-// })(databaseConfig);
+export const CONN_STRING = (({ user, password, host, port, database }) => {
+  return `mongodb://${user}:${password}@${host}:${port}/${database}?authSource=admin`;
+})(databaseConfig);
 
 export default databaseConfig;

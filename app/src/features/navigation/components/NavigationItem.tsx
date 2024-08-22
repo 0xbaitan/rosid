@@ -1,7 +1,7 @@
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "../styles/NavigationItem.scss";
-import { useNavigate } from "react-router-dom";
+import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import '../styles/NavigationItem.scss';
+import { useNavigate } from 'react-router-dom';
 
 export type NavigationItemUniqueProps = {
   icon?: IconDefinition;
@@ -16,7 +16,7 @@ export default function NavigationItem(props: NavigationItemProps) {
   return (
     <li
       {...liProps}
-      className={["ro-nav-item"].join(" ")}
+      className={['ro-nav-item'].join(' ')}
       onClick={() => navigate(url)}
     >
       {icon && <FontAwesomeIcon icon={icon} className="ro-nav-item__icon" />}

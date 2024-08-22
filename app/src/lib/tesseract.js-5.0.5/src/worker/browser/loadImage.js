@@ -5,18 +5,21 @@
  * @function
  * @access private
  */
-const readFromBlobOrFile = (blob) => (
+const readFromBlobOrFile = (blob) =>
   new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.onload = () => {
       resolve(fileReader.result);
     };
-    fileReader.onerror = ({ target: { error: { code } } }) => {
+    fileReader.onerror = ({
+      target: {
+        error: { code },
+      },
+    }) => {
       reject(Error(`File could not be read! Code=${code}`));
     };
     fileReader.readAsArrayBuffer(blob);
-  })
-);
+  });
 
 /**
  * loadImage
@@ -41,7 +44,10 @@ const loadImage = async (image) => {
       const resp = await fetch(image);
       data = await resp.arrayBuffer();
     }
-  } else if (typeof HTMLElement !== 'undefined' && image instanceof HTMLElement) {
+  } else if (
+    typeof HTMLElement !== 'undefined' &&
+    image instanceof HTMLElement
+  ) {
     if (image.tagName === 'IMG') {
       data = await loadImage(image.src);
     }
@@ -56,7 +62,10 @@ const loadImage = async (image) => {
         });
       });
     }
-  } else if (typeof OffscreenCanvas !== 'undefined' && image instanceof OffscreenCanvas) {
+  } else if (
+    typeof OffscreenCanvas !== 'undefined' &&
+    image instanceof OffscreenCanvas
+  ) {
     const blob = await image.convertToBlob();
     data = await readFromBlobOrFile(blob);
   } else if (image instanceof File || image instanceof Blob) {

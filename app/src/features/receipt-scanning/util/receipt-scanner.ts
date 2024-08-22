@@ -1,14 +1,14 @@
-import { createWorker } from "@/lib/tesseract.js-5.0.5";
-import receiptParsingChain from "../ai";
-import { PossiblyNull } from "@/types";
-import { Receipt } from "../types";
-import { isReceipt } from "./validator";
+import { createWorker } from '@/lib/tesseract.js-5.0.5';
+import receiptParsingChain from '../ai';
+import { PossiblyNull } from '@/types';
+import { Receipt } from '../types';
+import { isReceipt } from './validator';
 
 export default class ReceiptScanner {
   public static async scanImage(
     imageSrc: string
   ): Promise<PossiblyNull<Receipt>> {
-    const worker = await createWorker("eng");
+    const worker = await createWorker('eng');
     const ret = await worker.recognize(imageSrc);
     await worker.terminate();
     const scannedText = ret.data.text;
@@ -21,7 +21,7 @@ export default class ReceiptScanner {
     let output = await receiptParsingChain.invoke({
       input: scannedText,
     });
-    output = output.replace(/```json|```/g, "");
+    output = output.replace(/```json|```/g, '');
     let receipt = JSON.parse(output);
     if (receipt === null) {
       return null;

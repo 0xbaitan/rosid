@@ -24,10 +24,10 @@
 ---
 
 <a name="create-worker"></a>
+
 ## createWorker(options): Worker
 
-`createWorker` is a function that creates a Tesseract.js worker.  A Tesseract.js worker is an object that creates and manages an instance of Tesseract running in a web worker (browser) or worker thread (Node.js).  Once created, OCR jobs are sent through the worker. 
-
+`createWorker` is a function that creates a Tesseract.js worker. A Tesseract.js worker is an object that creates and manages an instance of Tesseract running in a web worker (browser) or worker thread (Node.js). Once created, OCR jobs are sent through the worker.
 
 **Arguments:**
 
@@ -35,7 +35,7 @@
 - `oem` a enum to indicate the OCR Engine Mode you use
 - `options` an object of customized options
   - `corePath` path to a directory containing **both** `tesseract-core.wasm.js` and `tesseract-core-simd.wasm.js` from [Tesseract.js-core](https://www.npmjs.com/package/tesseract.js-core) package
-     - Setting `corePath` to a specific `.js` file is **strongly discouraged.**  To provide the best performance on all devices, Tesseract.js needs to be able to pick between `tesseract-core.wasm.js` and `tesseract-core-simd.wasm.js`.  See [this issue](https://github.com/naptha/tesseract.js/issues/735) for more detail.
+    - Setting `corePath` to a specific `.js` file is **strongly discouraged.** To provide the best performance on all devices, Tesseract.js needs to be able to pick between `tesseract-core.wasm.js` and `tesseract-core-simd.wasm.js`. See [this issue](https://github.com/naptha/tesseract.js/issues/735) for more detail.
   - `langPath` path for downloading traineddata, do not include `/` at the end of the path
   - `workerPath` path for downloading worker script
   - `dataPath` path for saving traineddata in WebAssembly file system, not common to modify
@@ -53,9 +53,9 @@
   - `errorHandler` a function to handle worker errors, a quick example is `err => console.error(err)`
 - `config` an object of customized options which are set prior to initialization
   - This argument allows for setting "init only" Tesseract parameters
-	  - Most Tesseract parameters can be set after a worker is initialized, using either `worker.setParameters` or the `options` argument of `worker.recognize`.  
-	  - A handful of Tesseract parameters, referred to as "init only" parameters in Tesseract documentation, cannot be modified after Tesseract is initialized--these can only be set using this argument
-		  - Examples include `load_system_dawg`, `load_number_dawg`, and `load_punc_dawg`
+    - Most Tesseract parameters can be set after a worker is initialized, using either `worker.setParameters` or the `options` argument of `worker.recognize`.
+    - A handful of Tesseract parameters, referred to as "init only" parameters in Tesseract documentation, cannot be modified after Tesseract is initialized--these can only be set using this argument
+      - Examples include `load_system_dawg`, `load_number_dawg`, and `load_punc_dawg`
 
 **Examples:**
 
@@ -63,16 +63,18 @@
 const { createWorker } = Tesseract;
 const worker = await createWorker('eng', 1, {
   langPath: '...',
-  logger: m => console.log(m),
+  logger: (m) => console.log(m),
 });
 ```
 
 <a name="worker-recognize"></a>
+
 ### worker.recognize(image, options, output, jobId): Promise
 
 `worker.recognize` provides core function of Tesseract.js as it executes OCR
 
 Figures out what words are in `image`, where the words are in `image`, etc.
+
 > [!TIP]
 > Note: `image` should be sufficiently high resolution.
 > Often, the same image will get much better results if you upscale it before calling `recognize`.
@@ -86,10 +88,10 @@ Figures out what words are in `image`, where the words are in `image`, etc.
 - `jobId` Please see details above
 
 **Output:**
-`worker.recognize` returns a promise to an object containing `jobId` and `data` properties.  The `data` property contains output in all of the formats specified using the `output` argument.
+`worker.recognize` returns a promise to an object containing `jobId` and `data` properties. The `data` property contains output in all of the formats specified using the `output` argument.
 
 > [!NOTE]  
-> `worker.recognize` still returns an output object even if no text is detected (the outputs will simply contain no words). No exception is thrown as determining the page is empty is considered a valid result. 
+> `worker.recognize` still returns an output object even if no text is detected (the outputs will simply contain no words). No exception is thrown as determining the page is empty is considered a valid result.
 
 **Examples:**
 
@@ -97,7 +99,9 @@ Figures out what words are in `image`, where the words are in `image`, etc.
 const { createWorker } = Tesseract;
 (async () => {
   const worker = await createWorker('eng');
-  const { data: { text } } = await worker.recognize(image);
+  const {
+    data: { text },
+  } = await worker.recognize(image);
   console.log(text);
 })();
 ```
@@ -108,7 +112,9 @@ With rectangle
 const { createWorker } = Tesseract;
 (async () => {
   const worker = await createWorker('eng');
-  const { data: { text } } = await worker.recognize(image, {
+  const {
+    data: { text },
+  } = await worker.recognize(image, {
     rectangle: { top: 0, left: 0, width: 100, height: 100 },
   });
   console.log(text);
@@ -116,42 +122,44 @@ const { createWorker } = Tesseract;
 ```
 
 <a name="worker-set-parameters"></a>
+
 ### worker.setParameters(params, jobId): Promise
 
-`worker.setParameters()` set parameters for Tesseract API (using SetVariable()), it changes the behavior of Tesseract and some parameters like tessedit\_char\_whitelist is very useful.
+`worker.setParameters()` set parameters for Tesseract API (using SetVariable()), it changes the behavior of Tesseract and some parameters like tessedit_char_whitelist is very useful.
 
 **Arguments:**
 
 - `params` an object with key and value of the parameters
 - `jobId` Please see details above
 
-Note:  `worker.setParameters` cannot be used to change the `oem`, as this value is set at initialization.  `oem` is initially set using an argument of `createWorker`.  After a worker already exists, changing `oem` requires running `worker.reinitialize`.
+Note: `worker.setParameters` cannot be used to change the `oem`, as this value is set at initialization. `oem` is initially set using an argument of `createWorker`. After a worker already exists, changing `oem` requires running `worker.reinitialize`.
 
 **Useful Parameters:**
 
-| name                        | type   | default value     | description                                                                                                                     |
-| --------------------------- | ------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| tessedit\_pageseg\_mode     | enum   | PSM.SINGLE\_BLOCK | Check [HERE](https://github.com/tesseract-ocr/tesseract/blob/4.0.0/src/ccstruct/publictypes.h#L163) for definition of each mode |
-| tessedit\_char\_whitelist   | string | ''                | setting white list characters makes the result only contains these characters, useful if content in image is limited           |
-| preserve\_interword\_spaces | string | '0'               | '0' or '1', keeps the space between words                                                                                       |
-| user\_defined\_dpi          | string | ''                | Define custom dpi, use to fix **Warning: Invalid resolution 0 dpi. Using 70 instead.**                                          |
+| name                      | type   | default value    | description                                                                                                                     |
+| ------------------------- | ------ | ---------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| tessedit_pageseg_mode     | enum   | PSM.SINGLE_BLOCK | Check [HERE](https://github.com/tesseract-ocr/tesseract/blob/4.0.0/src/ccstruct/publictypes.h#L163) for definition of each mode |
+| tessedit_char_whitelist   | string | ''               | setting white list characters makes the result only contains these characters, useful if content in image is limited            |
+| preserve_interword_spaces | string | '0'              | '0' or '1', keeps the space between words                                                                                       |
+| user_defined_dpi          | string | ''               | Define custom dpi, use to fix **Warning: Invalid resolution 0 dpi. Using 70 instead.**                                          |
 
-This list is incomplete.  As Tesseract.js passes parameters to the Tesseract engine, all parameters supported by the underlying version of Tesseract should also be supported by Tesseract.js.  (Note that parameters marked as “init only” in Tesseract documentation cannot be set by `setParameters` or `recognize`.) 
+This list is incomplete. As Tesseract.js passes parameters to the Tesseract engine, all parameters supported by the underlying version of Tesseract should also be supported by Tesseract.js. (Note that parameters marked as “init only” in Tesseract documentation cannot be set by `setParameters` or `recognize`.)
 
 **Examples:**
 
 ```javascript
-(async () => {
+async () => {
   await worker.setParameters({
     tessedit_char_whitelist: '0123456789',
   });
-})
+};
 ```
 
 <a name="worker-reinitialize"></a>
+
 ### worker.reinitialize(langs, oem, jobId): Promise
 
-`worker.reinitialize()` re-initializes an existing Tesseract.js worker with different `langs` and `oem` arguments.  
+`worker.reinitialize()` re-initializes an existing Tesseract.js worker with different `langs` and `oem` arguments.
 
 **Arguments:**
 
@@ -160,7 +168,7 @@ This list is incomplete.  As Tesseract.js passes parameters to the Tesseract eng
 - `config` an object of customized options which are set prior to initialization (see details above)
 - `jobId` Please see details above
 
-Note: to switch from Tesseract LSTM (`oem` value `1`) to Tesseract Legacy (`oem` value `0`) using `worker.reinitialize()`, the worker must already contain the code required to run the Tesseract Legacy model.  Setting `legacyCore: true` and `legacyLang: true` in `createWorker` options ensures this is the case.
+Note: to switch from Tesseract LSTM (`oem` value `1`) to Tesseract Legacy (`oem` value `0`) using `worker.reinitialize()`, the worker must already contain the code required to run the Tesseract Legacy model. Setting `legacyCore: true` and `legacyLang: true` in `createWorker` options ensures this is the case.
 
 **Examples:**
 
@@ -169,12 +177,13 @@ await worker.reinitialize('eng', 1);
 ```
 
 <a name="worker-detect"></a>
+
 ### worker.detect(image, jobId): Promise
 
 `worker.detect` does OSD (Orientation and Script Detection) to the image instead of OCR.
 
 > [!NOTE]  
-> Running `worker.detect` requires a worker with code and language data that supports Tesseract Legacy (this is not enabled by default).  If you want to run `worker.detect`, set `legacyCore` and `legacyLang` to `true` in the `createWorker` options. 
+> Running `worker.detect` requires a worker with code and language data that supports Tesseract Legacy (this is not enabled by default). If you want to run `worker.detect`, set `legacyCore` and `legacyLang` to `true` in the `createWorker` options.
 
 **Arguments:**
 
@@ -186,13 +195,17 @@ await worker.reinitialize('eng', 1);
 ```javascript
 const { createWorker } = Tesseract;
 (async () => {
-  const worker = await createWorker('eng', 1, {legacyCore: true, legacyLang: true});
+  const worker = await createWorker('eng', 1, {
+    legacyCore: true,
+    legacyLang: true,
+  });
   const { data } = await worker.detect(image);
   console.log(data);
 })();
 ```
 
 <a name="worker-terminate"></a>
+
 ### worker.terminate(jobId): Promise
 
 `worker.terminate` terminates the worker and cleans up
@@ -203,8 +216,8 @@ const { createWorker } = Tesseract;
 })();
 ```
 
-
 <a name="worker-writeText"></a>
+
 ### Worker.writeText(path, text, jobId): Promise
 
 `worker.writeText` writes a text file to the path specified in MEMFS, it is useful when you want to use some features that requires tesseract.js
@@ -225,6 +238,7 @@ to read file from file system.
 ```
 
 <a name="worker-readText"></a>
+
 ### worker.readText(path, jobId): Promise
 
 `worker.readText` reads a text file to the path specified in MEMFS, it is useful when you want to check the content.
@@ -244,6 +258,7 @@ to read file from file system.
 ```
 
 <a name="worker-removeFile"></a>
+
 ### worker.removeFile(path, jobId): Promise
 
 `worker.removeFile` removes a file in MEMFS, it is useful when you want to free the memory.
@@ -262,6 +277,7 @@ to read file from file system.
 ```
 
 <a name="worker-FS"></a>
+
 ### worker.FS(method, args, jobId): Promise
 
 `worker.FS` is a generic FS function to do anything you want, you can check [HERE](https://emscripten.org/docs/api_reference/Filesystem-API.html) for all functions.
@@ -269,7 +285,7 @@ to read file from file system.
 **Arguments:**
 
 - `method` method name
-- `args` array of arguments to pass  
+- `args` array of arguments to pass
 - `jobId` Please see details above
 
 **Examples:**
@@ -283,6 +299,7 @@ to read file from file system.
 ```
 
 <a name="create-scheduler"></a>
+
 ## createScheduler(): Scheduler
 
 `createScheduler` is a factory function to create a scheduler, a scheduler manages a job queue and workers to enable multiple workers to work together, it is useful when you want to speed up your performance.
@@ -297,6 +314,7 @@ const scheduler = createScheduler();
 ### Scheduler
 
 <a name="scheduler-add-worker"></a>
+
 ### scheduler.addWorker(worker): string
 
 `scheduler.addWorker` adds a worker into the worker pool inside scheduler, it is suggested to add one worker to only one scheduler.
@@ -315,6 +333,7 @@ scheduler.addWorker(worker);
 ```
 
 <a name="scheduler-add-job"></a>
+
 ### scheduler.addJob(action, ...payload): Promise
 
 `scheduler.addJob` adds a job to the job queue and scheduler waits and finds an idle worker to take the job.
@@ -328,22 +347,27 @@ scheduler.addWorker(worker);
 
 ```javascript
 (async () => {
- const { data: { text } } = await scheduler.addJob('recognize', image, options);
- const { data } = await scheduler.addJob('detect', image);
+  const {
+    data: { text },
+  } = await scheduler.addJob('recognize', image, options);
+  const { data } = await scheduler.addJob('detect', image);
 })();
 ```
 
 <a name="scheduler-get-queue-len"></a>
+
 ### scheduler.getQueueLen(): number
 
 `scheduler.getNumWorkers()` returns the length of job queue.
 
 <a name="scheduler-get-num-workers"></a>
+
 ### Scheduler.getNumWorkers(): number
 
 Scheduler.getNumWorkers() returns number of workers added into the scheduler
 
 <a name="scheduler-terminate"></a>
+
 ### scheduler.terminate(): Promise
 
 `scheduler.terminate()` terminates all workers added, useful to do quick clean up.
@@ -357,6 +381,7 @@ Scheduler.getNumWorkers() returns number of workers added into the scheduler
 ```
 
 <a name="set-logging"></a>
+
 ## setLogging(logging: boolean)
 
 `setLogging` sets the logging flag, you can `setLogging(true)` to see detailed information, useful for debugging.
@@ -373,31 +398,35 @@ setLogging(true);
 ```
 
 <a name="recognize"></a>
+
 ## recognize(image, langs, options): Promise
 
 > [!WARNING]  
-> This function is depreciated and should be replaced with `worker.recognize` (see above). 
+> This function is depreciated and should be replaced with `worker.recognize` (see above).
 
 `recognize` works the same as `worker.recognize`, except that a new worker is created, loaded, and destroyed every time the function is called.
 
 See [Tesseract.js](../src/Tesseract.js)
 
 <a name="detect"></a>
+
 ## detect(image, options): Promise
 
 > [!WARNING]  
-> This function is depreciated and should be replaced with `worker.detect` (see above). 
+> This function is depreciated and should be replaced with `worker.detect` (see above).
 
 `detect` works the same as `worker.detect`, except that a new worker is created, loaded, and destroyed every time the function is called.
 
 See [Tesseract.js](../src/Tesseract.js)
 
 <a name="psm"></a>
+
 ## PSM
 
 See [PSM.js](../src/constants/PSM.js)
 
 <a name="oem"></a>
+
 ## OEM
 
 See [OEM.js](../src/constants/OEM.js)

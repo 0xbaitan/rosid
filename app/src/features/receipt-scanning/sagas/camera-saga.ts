@@ -1,5 +1,5 @@
-import { put, takeEvery } from "redux-saga/effects";
-import { cameraActions } from "../reducers/camera-reducer";
+import { put, takeEvery } from 'redux-saga/effects';
+import { cameraActions } from '../reducers/camera-reducer';
 
 function* setImageSideEffect() {
   yield put(cameraActions.enableCamera(false));
