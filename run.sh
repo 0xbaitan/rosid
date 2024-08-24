@@ -1,9 +1,28 @@
 #!/bin/bash
 
-case "$1" in
+command=$1
+
+shift 2
+
+case "$command" in
+    
+    "install:monorepo")
+        npm install "$@"
+    ;;
+    
+    "install:app")
+        npm install "$@" --workspace="app"
+    ;;
+    
+    "install:server")
+        npm install "$@" --workspace="server"
+    ;;
+    
+    "install:shared")
+        npm install "$@" --workspace="shared"
+    ;;
+    
     "start")
-        ./run.sh build:shared
-        ./run.sh lint-format
         docker-compose up
     ;;
     

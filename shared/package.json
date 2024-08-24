@@ -12,16 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nestjs/swagger": "^7.4.0",
-    "class-validator": "^0.14.1"
+    "@nestjs/swagger": "^7.4.0"
   },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.1.0",
-    "@typescript-eslint/parser": "^8.1.0",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^17.10.2",
-    "eslint-plugin-prettier": "^5.2.1"
-  }
+  "devDependencies": {}
 }

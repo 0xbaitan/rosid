@@ -1,6 +1,9 @@
 data/
 */**/node_modules
+*/**/package-lock.json
 */**/.env.*
 */**/.env
 */**/build 
 */**/dist
+node_modules
+package-lock.json
